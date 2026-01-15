@@ -132,6 +132,8 @@ class OrderLineStatusType extends BaseModel
 
     public const STATUS_ACKNOWLEDGED = 'Acknowledged';
 
+    public const STATUS_DISPENSED = 'Dispensed';
+
     public const STATUS_SHIPPED = 'Shipped';
 
     public const STATUS_DELIVERED = 'Delivered';
@@ -150,6 +152,7 @@ class OrderLineStatusType extends BaseModel
         return [
             self::STATUS_CREATED,
             self::STATUS_ACKNOWLEDGED,
+            self::STATUS_DISPENSED,
             self::STATUS_SHIPPED,
             self::STATUS_DELIVERED,
             self::STATUS_CANCELLED,
