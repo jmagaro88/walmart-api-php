@@ -132,6 +132,8 @@ class OrderLineStatusType extends BaseModel
 
     public const STATUS_ACKNOWLEDGED = 'Acknowledged';
 
+    public const STATUS_PICKUP_READY = 'PickupReady';
+
     public const STATUS_DISPENSED = 'Dispensed';
 
     public const STATUS_SHIPPED = 'Shipped';
@@ -152,6 +154,7 @@ class OrderLineStatusType extends BaseModel
         return [
             self::STATUS_CREATED,
             self::STATUS_ACKNOWLEDGED,
+            self::STATUS_PICKUP_READY,
             self::STATUS_DISPENSED,
             self::STATUS_SHIPPED,
             self::STATUS_DELIVERED,
@@ -227,17 +230,12 @@ class OrderLineStatusType extends BaseModel
         if (is_null($status)) {
             throw new \InvalidArgumentException('non-nullable status cannot be null');
         }
-        $allowedValues = $this->getStatusAllowableValues();
-        if (!in_array($status, $allowedValues, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    "Invalid value '%s' for 'status', must be one of '%s'",
-                    $status,
-                    implode("', '", $allowedValues)
-                )
-            );
-        }
 
+        // Walmart introduces order line statuses (Dispensed, PickupReady, ...) faster
+        // than its OpenAPI spec documents them, and throwing on an unrecognized value
+        // here fails the deserialization of the entire order page rather than the one
+        // line that carries it. Unknown values are preserved instead; requests built
+        // by hand are still checked by listInvalidProperties().
         $this->container['status'] = $status;
         return $this;
     }
